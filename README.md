@@ -28,12 +28,12 @@ cd Santa_Secret
 
 *nix или MacOS:
 ```bash
-python3 -m venv env
+python3 -m venv venv
 source venv/bin/activate
 ```
 Windows:
 ```bash
-python -m venv env
+python -m venv venv
 source venv/bin/activate
 ```
 
