@@ -1,10 +1,8 @@
-import csv
-import datetime
-
 from django.contrib import admin
-from django.http import HttpResponse
 
-# from .models import ...
+from .models import Game, User, GameParticipant
 
 
-# admin.site.register(<name>, <nameAdmin>)
+admin.site.register(Game)
+admin.site.register(User)
+admin.site.register(GameParticipant)
