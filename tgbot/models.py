@@ -49,7 +49,7 @@ class GameParticipant(models.Model):
         verbose_name='пользователь'
     )
     recipient = models.ForeignKey(
-        User,
+        'GameParticipant',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
