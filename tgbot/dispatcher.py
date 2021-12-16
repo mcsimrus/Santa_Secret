@@ -16,13 +16,25 @@ from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
 from tgbot.handlers import main_handlers
 
 
+main_handler = ConversationHandler(
+    entry_points=[
+        CommandHandler('start', main_handlers.start),
+        MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
+    ],
+    states={
+        # main_handlers.DO_USER - do user branch
+        # main_handlers.DO_CREATE - do create game branch
+    },
+    fallbacks=[
+        CommandHandler('start', main_handlers.start),
+        MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
+    ]
+)
+
+
 def setup_dispatcher(dp):
 
-    # dp.add_handler(CommandHandler("admin", admin_handlers.command_admin))
-    # dp.add_handler(CallbackQueryHandler(admin_handlers.send_orders_statistics))
-
-    # Pre-checkout handler to final check
-    # dp.add_handler(PreCheckoutQueryHandler(rent_handlers.precheckout_callback))
+    dp.add_handler(main_handler)
 
     return dp
 
