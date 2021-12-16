@@ -13,7 +13,7 @@ from telegram.ext import (
 import telegram.error
 
 from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
-from tgbot.handlers import main_handlers
+from tgbot.handlers import main_handlers, user_handlers
 
 
 main_handler = ConversationHandler(
@@ -22,13 +22,19 @@ main_handler = ConversationHandler(
         MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
     ],
     states={
-        # main_handlers.DO_USER - do user branch
+        # user branch
+        main_handlers.DO_USER: [MessageHandler(Filters.regex('^Приступить$'), user_handlers.get_name)],
+        user_handlers.GET_NAME: [MessageHandler(Filters.text, user_handlers.get_email)],
+        user_handlers.GET_EMAIL: [MessageHandler(Filters.text, user_handlers.get_wish_list)],
+        user_handlers.GET_WISH_LIST: [MessageHandler(Filters.text, user_handlers.get_santa_letter)],
+        user_handlers.GET_SANTA_LETTER: [MessageHandler(Filters.text, user_handlers.end_registration)]
         # main_handlers.DO_CREATE - do create game branch
     },
     fallbacks=[
         CommandHandler('start', main_handlers.start),
         MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
-    ]
+    ],
+    per_chat=False
 )
 
 
