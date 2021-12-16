@@ -19,6 +19,7 @@ def start(update: Update, context: CallbackContext):
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         game_id = args[0]
+        context.user_data['game_id'] = game_id
         update.message.reply_text(
             f'Привет. ID игры {game_id}. Это временное сообщение,'
             f' в будущем здесь будет информация об игре. '
