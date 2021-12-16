@@ -99,10 +99,7 @@ def game_created(update: Update, context: CallbackContext):
         if len(day) > 2 or len(month) > 2 or len(year) != 4:
             raise ValueError
     except ValueError:
-        update.message.reply_text(
-            text=GET_DATE_MSG
-        )
-        return DO_GET_REG_PERIOD
+        return get_game_date_send(update, context)
 
     context.user_data['game_date_send'] = update.message.text
     day, month, year = map(int, (day, month, year))
