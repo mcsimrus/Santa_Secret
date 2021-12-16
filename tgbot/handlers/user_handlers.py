@@ -1,4 +1,4 @@
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext, ConversationHandler
 
 GET_NAME, GET_EMAIL, GET_WISH_LIST, GET_SANTA_LETTER = range(10, 14)
@@ -12,6 +12,8 @@ def get_name(update: Update, context: CallbackContext):
 
 
 def get_email(update: Update, context: CallbackContext):
+    context.user_data['name'] = update.message.text
+
     update.message.reply_text(
         'Введите свой адрес электронной почты:'
     )
@@ -19,6 +21,8 @@ def get_email(update: Update, context: CallbackContext):
 
 
 def get_wish_list(update: Update, context: CallbackContext):
+    context.user_data['email'] = update.message.text
+
     keyboard = [
         [
             'Пропустить'
@@ -38,6 +42,11 @@ def get_wish_list(update: Update, context: CallbackContext):
 
 
 def get_santa_letter(update: Update, context: CallbackContext):
+    if update.message.text != 'Пропустить':
+        context.user_data['wish_list'] = update.message.text
+    else:
+        context.user_data['wish_list'] = None
+
     keyboard = [
         [
             'Пропустить'
@@ -57,11 +66,26 @@ def get_santa_letter(update: Update, context: CallbackContext):
 
 
 def end_registration(update: Update, context: CallbackContext):
+    if update.message.text != 'Пропустить':
+        context.user_data['santa_letter'] = update.message.text
+    else:
+        context.user_data['santa_letter'] = None
+
     update.message.reply_text(
         'Превосходно, ты в игре! 31.12.2021 мы проведем жеребьевку '
         'и ты узнаешь имя и контакты своего тайного друга. '
-        'Ему и нужно будет подарить подарок!'
+        'Ему и нужно будет подарить подарок!',
+        reply_markup=ReplyKeyboardRemove()
     )
+
+    user_data = context.user_data
+
+    user_data_message = (f'Имя: {user_data["name"]}\n'
+                         f'Email: {user_data["email"]}\n'
+                         f'Вишлист: {user_data["wish_list"]}\n'
+                         f'Письмо Санте: {user_data["santa_letter"]}')
+
+    update.message.reply_text(user_data_message)
 
     # here be database things
 
