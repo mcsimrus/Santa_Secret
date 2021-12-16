@@ -23,6 +23,7 @@ def start(update: Update, context: CallbackContext):
     args = context.args
     if args:
         game_id = args[0]
+        context.user_data['game_id'] = game_id
         update.message.reply_text(
             f'Привет. ID игры {game_id}. Это временное сообщение, в будущем здесь будет информация об игре. '
             f'Нажми на кнопку ниже, чтобы перейти к заполнению данных',
