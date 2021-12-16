@@ -13,40 +13,10 @@ from telegram.ext import (
 import telegram.error
 
 from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
-from tgbot.handlers.common import handlers as common_handlers
-from tgbot.handlers.rent import handlers as rent_handlers
-from tgbot.handlers.admin import handlers as admin_handlers
-
-
-# rent_handler = ConversationHandler(
-#     entry_points=[
-#         MessageHandler(Filters.regex('^(Выбрать адрес склада)$'),
-#                        rent_handlers.send_message_with_addresses)
-#     ],
-#     states={
-#         rent_handlers.ASK_PROMO: [
-#             MessageHandler(Filters.text & ~Filters.command,
-#                            rent_handlers.ask_promo)
-#         ],
-#         rent_handlers.GET_PROMO: [
-#             MessageHandler(Filters.text & ~Filters.command,
-#                            rent_handlers.get_promo)
-#         ],
-#         ...
-#     },
-#     fallbacks=[
-#         MessageHandler(Filters.successful_payment,
-#                        rent_handlers.successful_payment_callback),
-#         CommandHandler("cancel", common_handlers.command_cancel)
-#     ]
-# )
+from tgbot.handlers import main_handlers
 
 
 def setup_dispatcher(dp):
-    # dp.add_handler(rent_handler)
-
-    dp.add_handler(CommandHandler("start", common_handlers.command_start))
-    dp.add_handler(CommandHandler("cancel", common_handlers.command_cancel))
 
     # dp.add_handler(CommandHandler("admin", admin_handlers.command_admin))
     # dp.add_handler(CallbackQueryHandler(admin_handlers.send_orders_statistics))
