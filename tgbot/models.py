@@ -2,6 +2,12 @@ from django.db import models
 
 
 class Game(models.Model):
+    name = models.CharField(
+        max_length=50,
+        null=True,
+        blank=False,
+        verbose_name='название игры'
+    )
     min_sum = models.IntegerField(
         null=True,
         blank=True,
@@ -23,6 +29,12 @@ class Game(models.Model):
     send_date = models.DateField(
         verbose_name='дата отправки подарков'
     )
+
+    def game_id(self):
+        return f'{self.id}-{self.name}'
+
+    def __str__(self):
+        return self.game_id()
 
 
 class User(models.Model):

@@ -13,22 +13,57 @@ from telegram.ext import (
 import telegram.error
 
 from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
-from tgbot.handlers import main_handlers, user_handlers
+from tgbot.handlers import main_handlers, user_handlers, game_handlers
 
 
 main_handler = ConversationHandler(
     entry_points=[
         CommandHandler('start', main_handlers.start),
-        MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
+        # MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
     ],
     states={
         # user branch
-        main_handlers.DO_USER: [MessageHandler(Filters.regex('^Приступить$'), user_handlers.get_name)],
-        user_handlers.GET_NAME: [MessageHandler(Filters.text, user_handlers.get_email)],
-        user_handlers.GET_EMAIL: [MessageHandler(Filters.text, user_handlers.get_wish_list)],
-        user_handlers.GET_WISH_LIST: [MessageHandler(Filters.text, user_handlers.get_santa_letter)],
-        user_handlers.GET_SANTA_LETTER: [MessageHandler(Filters.text, user_handlers.end_registration)]
-        # main_handlers.DO_CREATE - do create game branch
+        main_handlers.DO_USER: [
+            MessageHandler(Filters.regex('^Приступить$'),
+                           user_handlers.get_name)
+        ],
+        user_handlers.GET_NAME: [
+            MessageHandler(Filters.text, user_handlers.get_email)
+        ],
+        user_handlers.GET_EMAIL: [
+            MessageHandler(Filters.text, user_handlers.get_wish_list)
+        ],
+        user_handlers.GET_WISH_LIST: [
+            MessageHandler(Filters.text, user_handlers.get_santa_letter)
+        ],
+        user_handlers.GET_SANTA_LETTER: [
+            MessageHandler(Filters.text, user_handlers.end_registration)
+        ],
+
+        # game branch
+        # main_handlers.DO_CREATE_GAME: [
+        #     MessageHandler(Filters.regex('^Начать$'),
+        #                    game_handlers.get_game_name)
+        # ],
+        main_handlers.DO_CREATE_GAME: [
+            MessageHandler(Filters.regex('^Создать игру$'),
+                           game_handlers.get_game_name)
+        ],
+        game_handlers.DO_GET_NAME: [
+            MessageHandler(Filters.text, game_handlers.get_game_price_limit)
+        ],
+        game_handlers.DO_GET_PRICE_LIMIT: [
+            MessageHandler(Filters.text, game_handlers.get_game_reg_period)
+        ],
+        game_handlers.DO_GET_REG_PERIOD: [
+            MessageHandler(Filters.text, game_handlers.get_game_date_send)
+        ],
+        game_handlers.DO_GET_DATE_SEND: [
+            MessageHandler(Filters.text, game_handlers.game_created)
+        ],
+        # game_handlers.DO_GAME_CREATED: [
+        #     MessageHandler(Filters.text, game_handlers.game_created)
+        # ],
     },
     fallbacks=[
         CommandHandler('start', main_handlers.start),

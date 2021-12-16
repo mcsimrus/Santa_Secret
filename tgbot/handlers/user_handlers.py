@@ -72,7 +72,7 @@ def end_registration(update: Update, context: CallbackContext):
         context.user_data['santa_letter'] = None
 
     update.message.reply_text(
-        'Превосходно, ты в игре! 31.12.2021 мы проведем жеребьевку '
+        'Превосходно, ты в игре! 31.12.2021 мы проведем жеребьёвку '
         'и ты узнаешь имя и контакты своего тайного друга. '
         'Ему и нужно будет подарить подарок!',
         reply_markup=ReplyKeyboardRemove()
@@ -91,3 +91,6 @@ def end_registration(update: Update, context: CallbackContext):
 
     return ConversationHandler.END
 
+
+if __name__ == '__main__':
+    print(GET_NAME, GET_EMAIL, GET_WISH_LIST, GET_SANTA_LETTER)
