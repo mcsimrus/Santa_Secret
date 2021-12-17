@@ -18,11 +18,6 @@ class Game(models.Model):
         blank=True,
         verbose_name='максимальная сумма'
     )
-    start_date = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name='старт приема заявок'
-    )
     end_date = models.DateField(
         verbose_name='окончание приема заявок'
     )

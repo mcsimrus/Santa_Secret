@@ -129,7 +129,6 @@ def game_created(update: Update, context: CallbackContext):
         name=context.user_data['game_name'],
         min_sum=min_sum,
         max_sum=max_sum,
-        start_date=datetime.now(),
         end_date=date_to,
         send_date=send_date
     )
