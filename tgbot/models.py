@@ -1,4 +1,5 @@
 from django.db import models
+from random import shuffle
 
 
 class Game(models.Model):
@@ -29,6 +30,17 @@ class Game(models.Model):
     def __str__(self):
         return self.game_id()
 
+    def calculate_recipients_in_game(self):
+        participants = list(self.participants.all())
+        shuffle(participants)
+        for i, participant in enumerate(participants):
+            if i != len(participants) - 1:
+                participant.recipient = participants[i+1]
+            else:
+                participant.recipient = participants[0]
+
+            participant.save()
+
 
 class User(models.Model):
     telegram_id = models.IntegerField(
@@ -46,7 +58,8 @@ class GameParticipant(models.Model):
     game = models.ForeignKey(
         Game,
         on_delete=models.CASCADE,
-        verbose_name='игра'
+        verbose_name='игра',
+        related_name='participants'
     )
     user = models.ForeignKey(
         User,
