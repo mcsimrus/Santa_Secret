@@ -12,7 +12,7 @@ def start(update: Update, context: CallbackContext):
     if args:
         keyboard = [
             [
-                'Приступить'
+                'Приступить к регистрации'
             ]
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -29,9 +29,14 @@ def start(update: Update, context: CallbackContext):
                    f'Дата отправки подарков: {game.send_date}')
 
         update.message.reply_text(
-            message,
+            message
+        )
+
+        update.message.reply_text(
+            'Нажми на кнопку Приступить к регистрации, чтобы перейти к регистрации в игре',
             reply_markup=reply_markup
         )
+
         return DO_USER
     else:
         keyboard = [

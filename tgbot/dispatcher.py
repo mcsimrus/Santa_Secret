@@ -22,7 +22,7 @@ main_handler = ConversationHandler(
     states={
         # user branch
         main_handlers.DO_USER: [
-            MessageHandler(Filters.regex('^Приступить$'),
+            MessageHandler(Filters.regex('^Приступить к регистрации$'),
                            user_handlers.get_name)
         ],
         user_handlers.GET_NAME: [
