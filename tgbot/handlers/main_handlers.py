@@ -2,7 +2,6 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, Filters
 
 from tgbot.models import Game
-from .game_handlers import get_game_name
 
 
 DO_CREATE_GAME, DO_USER = range(2)
@@ -19,11 +18,18 @@ def start(update: Update, context: CallbackContext):
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         game_id = args[0]
+        game = Game.objects.get(id=game_id)
         context.user_data['game_id'] = game_id
+
+        message = (f'Замечательно, ты собираешься участвовать в игре:\n'
+                   f'Название игры: {game.name}\n'
+                   f'Дата окончания регистрации: {game.end_date}\n'
+                   f'Минимальная стоимость подарка: {game.min_sum if game.min_sum else "Отсутствует"}\n'
+                   f'Максимальная стоимость подарка: {game.max_sum if game.max_sum else "Отсутствует"}\n'
+                   f'Дата отправки подарков: {game.send_date}')
+
         update.message.reply_text(
-            f'Привет. ID игры {game_id}. Это временное сообщение,'
-            f' в будущем здесь будет информация об игре. '
-            f'Нажми на кнопку ниже, чтобы перейти к заполнению данных',
+            message,
             reply_markup=reply_markup
         )
         return DO_USER
