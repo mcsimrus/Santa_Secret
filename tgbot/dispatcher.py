@@ -2,13 +2,11 @@ import sys
 import logging
 from typing import Dict
 
-from telegram import Bot, Update, BotCommand
+from telegram import Bot, BotCommand
 from telegram.ext import (
-    ConversationHandler, PreCheckoutQueryHandler, RegexHandler,
-    ShippingQueryHandler, Updater,
+    ConversationHandler, Updater,
     Dispatcher, Filters,
     CommandHandler, MessageHandler,
-    CallbackQueryHandler,
 )
 import telegram.error
 
@@ -40,11 +38,6 @@ main_handler = ConversationHandler(
             MessageHandler(Filters.text, user_handlers.end_registration)
         ],
 
-        # game branch
-        # main_handlers.DO_CREATE_GAME: [
-        #     MessageHandler(Filters.regex('^Начать$'),
-        #                    game_handlers.get_game_name)
-        # ],
         main_handlers.DO_CREATE_GAME: [
             MessageHandler(Filters.regex('^Создать игру$'),
                            game_handlers.get_game_name)
@@ -61,9 +54,6 @@ main_handler = ConversationHandler(
         game_handlers.DO_GET_DATE_SEND: [
             MessageHandler(Filters.text, game_handlers.game_created)
         ],
-        # game_handlers.DO_GAME_CREATED: [
-        #     MessageHandler(Filters.text, game_handlers.game_created)
-        # ],
     },
     fallbacks=[
         CommandHandler('start', main_handlers.start),
