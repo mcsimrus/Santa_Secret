@@ -4,8 +4,6 @@ from django.db import models
 class Game(models.Model):
     name = models.CharField(
         max_length=50,
-        null=True,
-        blank=False,
         verbose_name='название игры'
     )
     min_sum = models.IntegerField(
