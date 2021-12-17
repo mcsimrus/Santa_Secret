@@ -53,6 +53,9 @@ class User(models.Model):
     )
     email = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f'Пользователь {self.fio}'
+
 
 class GameParticipant(models.Model):
     game = models.ForeignKey(
@@ -64,7 +67,8 @@ class GameParticipant(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name='пользователь'
+        verbose_name='пользователь',
+        related_name='participations'
     )
     recipient = models.ForeignKey(
         'GameParticipant',
@@ -82,3 +86,6 @@ class GameParticipant(models.Model):
         verbose_name='письмо Санте',
         blank=True
     )
+
+    def __str__(self):
+        return f'{self.user} в игре {self.game}'
