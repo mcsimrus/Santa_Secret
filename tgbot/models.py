@@ -89,3 +89,24 @@ class GameParticipant(models.Model):
 
     def __str__(self):
         return f'{self.user} в игре {self.game}'
+
+
+class ExcludePairs(models.Model):
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        verbose_name='игра',
+        related_name='participants'
+    )
+    participant1 = models.ForeignKey(
+        GameParticipant,
+        on_delete=models.CASCADE,
+        verbose_name='первый участник',
+        related_name='participations1'
+    )
+    participant2 = models.ForeignKey(
+        GameParticipant,
+        on_delete=models.CASCADE,
+        verbose_name='второй участник',
+        related_name='participations2'
+    )
