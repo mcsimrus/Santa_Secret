@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Game, User, GameParticipant
+from .models import Game, User, GameParticipant, ExcludePairs
 
 
 @admin.action(description='Устроить жеребьевку участников')
@@ -16,3 +16,4 @@ class GameAdmin(admin.ModelAdmin):
 admin.site.register(Game, GameAdmin)
 admin.site.register(User)
 admin.site.register(GameParticipant)
+admin.site.register(ExcludePairs)
