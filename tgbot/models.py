@@ -33,9 +33,33 @@ class Game(models.Model):
     def calculate_recipients_in_game(self):
         participants = list(self.participants.all())
         shuffle(participants)
+
+        while True:
+            is_changed = False
+            for i in range(len(participants)):
+                if i != len(participants) - 1:
+                    sender = participants[i]
+                    recipient = participants[i+1]
+                    excluded_recipients = [pair.recipient for pair in sender.excluded_pair_as_sender.all()]
+                    if recipient in excluded_recipients:
+                        is_changed = True
+                        if i+2 != len(participants):
+                            participants[i+1], participants[i+2] = participants[i+2], participants[i+1]
+                        else:
+                            participants[i+1], participants[0] = participants[0], participants[i+1]
+                else:
+                    sender = participants[i]
+                    recipient = participants[0]
+                    excluded_recipients = [pair.recipient for pair in sender.excluded_pair_as_sender.all()]
+                    if recipient in excluded_recipients:
+                        is_changed = True
+                        participants[0], participants[1] = participants[1], participants[0]
+            if not is_changed:
+                break
+
         for i, participant in enumerate(participants):
             if i != len(participants) - 1:
-                participant.recipient = participants[i+1]
+                participant.recipient = participants[i + 1]
             else:
                 participant.recipient = participants[0]
 
@@ -96,19 +120,19 @@ class ExcludePairs(models.Model):
         Game,
         on_delete=models.CASCADE,
         verbose_name='игра',
-        related_name='excludepairs'
+        related_name='excluded_pairs'
     )
-    participant1 = models.ForeignKey(
+    sender = models.ForeignKey(
         GameParticipant,
         on_delete=models.CASCADE,
-        verbose_name='первый участник',
-        related_name='participations1'
+        verbose_name='Отправитель подарка',
+        related_name='excluded_pair_as_sender'
     )
-    participant2 = models.ForeignKey(
+    recipient = models.ForeignKey(
         GameParticipant,
         on_delete=models.CASCADE,
-        verbose_name='второй участник',
-        related_name='participations2'
+        verbose_name='Получатель подарка',
+        related_name='excluded_pair_as_recipient'
     )
 
     def __str__(self):
