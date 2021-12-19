@@ -10,8 +10,30 @@ from telegram.ext import (
 )
 import telegram.error
 
+from datetime import datetime, timezone, timedelta
+
 from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
 from tgbot.handlers import main_handlers, user_handlers, game_handlers
+from tgbot.models import Game
+
+
+MOSCOW_TIMEZONE = timezone(timedelta(hours=3))
+
+
+def send_messages_to_ended_games(send_hour, send_timezone: timezone):
+    now = datetime.now(send_timezone)
+    hour = now.hour
+    if hour == send_hour:
+        games = Game.objects.filter(send_date=now.date()).filter(is_ended=False)
+        for game in games:
+            if game.participants.filter(recipient=None):
+                game.calculate_recipients_in_game()
+
+            for participant in game.participants:
+                # send_message here
+                pass
+            game.is_ended = True
+            game.save()
 
 
 main_handler = ConversationHandler(
