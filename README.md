@@ -65,17 +65,6 @@ Windows:
 python manage.py createsuperuser
 ```
 
-- Инициализация основных справочников:
-
-*nix или MacOS:
-```bash
-python3 db_init.py
-```
-Windows:
-```bash
-python db_init.py
-```
-
 ## Запуск бота
 *nix или MacOS:
 ```bash
