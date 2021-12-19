@@ -23,6 +23,10 @@ class Game(models.Model):
     send_date = models.DateField(
         verbose_name='дата отправки подарков'
     )
+    is_ended = models.BooleanField(
+        verbose_name='игра окончена',
+        default=False
+    )
 
     def game_id(self):
         return f'{self.id}-{self.name}'
