@@ -1,3 +1,4 @@
+import re
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext, ConversationHandler
 from tgbot.models import User, GameParticipant, Game
@@ -36,6 +37,9 @@ def get_email(update: Update, context: CallbackContext):
 
 def get_wish_list(update: Update, context: CallbackContext):
     if not context.user_data.get('model_object'):
+        if not re.match(r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?",
+                        update.message.text):
+            return get_email(update, context)
         context.user_data['email'] = update.message.text
 
     keyboard = [
