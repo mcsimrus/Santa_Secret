@@ -16,11 +16,11 @@ from datetime import datetime, timezone, timedelta
 from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
 from tgbot.handlers import main_handlers, user_handlers, game_handlers
 from tgbot.models import Game
-from tgbot.admin import MAILING_HOUR
 
 
 MOSCOW_TIMEZONE = timezone(timedelta(hours=3))
 CHECK_TIMEOUT = 60
+IS_DEBUG = True
 
 
 main_handler = ConversationHandler(
@@ -82,7 +82,8 @@ def send_recipient_info_to_participant(game_participant):
               f'  получатель: {recipient_fio} ({recipient_email}),' \
               f'  его письмо Санте: {recipient_santa_letter}' \
               f'  и список пожеланий: {recipient_wishlist}'
-    # print(f'Сообщение для {recipient_fio} ({recipient.user.telegram_id}) отправлено')
+    if IS_DEBUG:
+        print(f'Сообщение для {recipient_fio} ({recipient.user.telegram_id}) отправлено')
     bot.send_message(text=message, chat_id=recipient.user.telegram_id)
 
 
@@ -102,11 +103,14 @@ def send_messages_to_ended_games(send_hour, send_timezone: timezone):
 
             game.is_ended = True
             game.save()
-    # print('Отправка сообщений для игр завершена')
+    if IS_DEBUG:
+        print('Отправка сообщений для игр завершена')
 
 
 def do_mailing(_: CallbackContext):
     hour = os.getenv('MAILING_HOUR', 12)
+    if IS_DEBUG:
+        print(f'Час отправки рассылки: {hour}')
     send_messages_to_ended_games(hour, MOSCOW_TIMEZONE)
 
 
