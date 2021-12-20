@@ -2,9 +2,6 @@ from django.contrib import admin
 
 from .models import Game, User, GameParticipant, ExcludePairs
 
-# Час, до которого открыта регистрация на игру и время рассылки писем по игре
-MAILING_HOUR = 12
-
 
 @admin.action(description='Устроить жеребьевку участников')
 def make_recipients_in_game(modeladmin, request, queryset):
