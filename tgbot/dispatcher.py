@@ -91,14 +91,21 @@ def send_messages_to_ended_games(send_hour, send_timezone: timezone):
     if DEBUG:
         print(now, send_hour)
     if now.hour == send_hour:
+        print('1')
         games = Game.objects.filter(end_date=now.date()).filter(is_ended=False)
+        print('2')
         for game in games:
+            print('3')
             if game.participants.filter(recipient=None):
+                print('4')
                 game.calculate_recipients_in_game()
+            print('5')
 
             for participant in game.participants.all():
+                print('6')
                 try:
                     send_recipient_info_to_participant(participant)
+                    print('7')
                 except telegram.error.BadRequest:
                     pass
 
