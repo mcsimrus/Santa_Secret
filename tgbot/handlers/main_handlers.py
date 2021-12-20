@@ -1,6 +1,6 @@
 import datetime
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import CallbackContext, Filters
+from telegram.ext import CallbackContext, Filters, ConversationHandler
 
 from tgbot.models import Game
 STOP_GAME_REG_HOUR = 12  # Час суток, когда заканчивается регистрация на игру
@@ -32,7 +32,7 @@ def start(update: Update, context: CallbackContext):
                 'С наступающим вас Новым Годом!!!',
                 reply_markup=ReplyKeyboardRemove()
             )
-            return DO_CREATE_GAME
+            return ConversationHandler.END
 
         message = (f'Замечательно, ты собираешься участвовать в игре:\n'
                    f'Название игры: {game.name}\n'
