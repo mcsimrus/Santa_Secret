@@ -81,44 +81,29 @@ def send_recipient_info_to_participant(game_participant):
               f'  получатель: {recipient_fio} ({recipient_email}),' \
               f'  его письмо Санте: {recipient_santa_letter}' \
               f'  и список пожеланий: {recipient_wishlist}'
-    if DEBUG:
-        print(f'Сообщение для {recipient_fio} ({recipient.user.telegram_id}) отправлено')
     bot.send_message(text=message, chat_id=game_participant.user.telegram_id)
 
 
 def send_messages_to_ended_games(send_hour, send_timezone: timezone):
     now = datetime.now(send_timezone)
-    if DEBUG:
-        print(now, now.hour, send_hour, type(now.hour), type(send_hour), now.hour == send_hour)
     if now.hour == send_hour:
-        print('1')
         games = Game.objects.filter(end_date=now.date()).filter(is_ended=False)
-        print('2')
         for game in games:
-            print('3')
             if game.participants.filter(recipient=None):
-                print('4')
                 game.calculate_recipients_in_game()
-            print('5')
 
             for participant in game.participants.all():
-                print('6')
                 try:
                     send_recipient_info_to_participant(participant)
-                    print('7')
                 except telegram.error.BadRequest:
                     pass
 
             game.is_ended = True
             game.save()
-    if DEBUG:
-        print('Отправка сообщений для игр завершена')
 
 
 def do_mailing(_: CallbackContext):
     hour = int(os.getenv('MAILING_HOUR', 12))
-    if DEBUG:
-        print(f'Час отправки рассылки: {hour}')
     send_messages_to_ended_games(hour, MOSCOW_TIMEZONE)
 
 
