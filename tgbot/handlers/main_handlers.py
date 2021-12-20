@@ -1,4 +1,5 @@
-from telegram import Update, ReplyKeyboardMarkup
+import datetime
+from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext, Filters
 
 from tgbot.models import Game
@@ -21,11 +22,24 @@ def start(update: Update, context: CallbackContext):
         game = Game.objects.get(id=game_id)
         context.user_data['game_id'] = game_id
 
+        # Проверка - открыта ли ещё регистрация на игру
+        game_end_date = game.end_date
+        if game_end_date < datetime.date.today():
+            update.message.reply_text(
+                f'К сожалению, регистрация участников на игру "{game.name}"'
+                f' завершена {game_end_date.strftime("%d.%m.%Y")}.\n'
+                'С наступающим вас Новым Годом!!!',
+                reply_markup=ReplyKeyboardRemove()
+            )
+            return DO_CREATE_GAME
+
         message = (f'Замечательно, ты собираешься участвовать в игре:\n'
                    f'Название игры: {game.name}\n'
                    f'Дата окончания регистрации: {game.end_date}\n'
-                   f'Минимальная стоимость подарка: {game.min_sum if game.min_sum else "Отсутствует"}\n'
-                   f'Максимальная стоимость подарка: {game.max_sum if game.max_sum else "Отсутствует"}\n'
+                   'Минимальная стоимость подарка:'
+                   f' {game.min_sum if game.min_sum else "Отсутствует"}\n'
+                   'Максимальная стоимость подарка:'
+                   f' {game.max_sum if game.max_sum else "Отсутствует"}\n'
                    f'Дата отправки подарков: {game.send_date}')
 
         update.message.reply_text(
@@ -33,7 +47,8 @@ def start(update: Update, context: CallbackContext):
         )
 
         update.message.reply_text(
-            'Нажми на кнопку Приступить к регистрации, чтобы перейти к регистрации в игре',
+            'Нажми на кнопку "Приступить к регистрации", чтобы перейти к'
+            ' регистрации в игре',
             reply_markup=reply_markup
         )
 
