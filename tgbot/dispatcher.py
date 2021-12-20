@@ -116,7 +116,7 @@ def send_messages_to_ended_games(send_hour, send_timezone: timezone):
 
 
 def do_mailing(_: CallbackContext):
-    hour = os.getenv('MAILING_HOUR', 12)
+    hour = int(os.getenv('MAILING_HOUR', 12))
     if DEBUG:
         print(f'Час отправки рассылки: {hour}')
     send_messages_to_ended_games(hour, MOSCOW_TIMEZONE)
