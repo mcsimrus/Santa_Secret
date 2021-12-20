@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 from typing import Dict
@@ -7,39 +8,24 @@ from telegram.ext import (
     ConversationHandler, Updater,
     Dispatcher, Filters,
     CommandHandler, MessageHandler,
+    CallbackContext,
 )
 import telegram.error
 
 from datetime import datetime, timezone, timedelta
-
 from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
 from tgbot.handlers import main_handlers, user_handlers, game_handlers
 from tgbot.models import Game
+from tgbot.admin import MAILING_HOUR
 
 
 MOSCOW_TIMEZONE = timezone(timedelta(hours=3))
-
-
-def send_messages_to_ended_games(send_hour, send_timezone: timezone):
-    now = datetime.now(send_timezone)
-    hour = now.hour
-    if hour == send_hour:
-        games = Game.objects.filter(send_date=now.date()).filter(is_ended=False)
-        for game in games:
-            if game.participants.filter(recipient=None):
-                game.calculate_recipients_in_game()
-
-            for participant in game.participants:
-                # send_message here
-                pass
-            game.is_ended = True
-            game.save()
+CHECK_TIMEOUT = 60
 
 
 main_handler = ConversationHandler(
     entry_points=[
-        CommandHandler('start', main_handlers.start),
-        # MessageHandler(Filters.regex('^Начать$'), main_handlers.start)
+        CommandHandler('start', main_handlers.start)
     ],
     states={
         # user branch
@@ -85,38 +71,60 @@ main_handler = ConversationHandler(
 )
 
 
+def send_recipient_info_to_participant(game_participant):
+    recipient = game_participant.recipient
+    recipient_fio = recipient.user.fio
+    recipient_email = recipient.user.email
+    recipient_santa_letter = recipient.santa_letter
+    recipient_wishlist = recipient.wish_list
+    message = f'Жеребьёвка в игре “Тайный Санта” проведена!\n' \
+              f'Спешу сообщить кто тебе выпал:' \
+              f'  получатель: {recipient_fio} ({recipient_email}),' \
+              f'  его письмо Санте: {recipient_santa_letter}' \
+              f'  и список пожеланий: {recipient_wishlist}'
+    # print(f'Сообщение для {recipient_fio} ({recipient.user.telegram_id}) отправлено')
+    bot.send_message(text=message, chat_id=recipient.user.telegram_id)
+
+
+def send_messages_to_ended_games(send_hour, send_timezone: timezone):
+    now = datetime.now(send_timezone)
+    if now.hour == send_hour:
+        games = Game.objects.filter(end_date=now.date()).filter(is_ended=False)
+        for game in games:
+            if game.participants.filter(recipient=None):
+                game.calculate_recipients_in_game()
+
+            for participant in game.participants.all():
+                try:
+                    send_recipient_info_to_participant(participant)
+                except telegram.error.BadRequest:
+                    pass
+
+            game.is_ended = True
+            game.save()
+    # print('Отправка сообщений для игр завершена')
+
+
+def do_mailing(_: CallbackContext):
+    hour = os.getenv('MAILING_HOUR', 12)
+    send_messages_to_ended_games(hour, MOSCOW_TIMEZONE)
+
+
 def setup_dispatcher(dp):
-
     dp.add_handler(main_handler)
-
     return dp
 
 
 def run_pooling():
-    """ Run bot in pooling mode """
     updater = Updater(TELEGRAM_TOKEN, use_context=True)
+    updater.dispatcher.add_handler(main_handler)
 
-    dp = updater.dispatcher
-    dp = setup_dispatcher(dp)
-
-    bot_info = Bot(TELEGRAM_TOKEN).get_me()
-    bot_link = f'https://t.me/{bot_info["username"]}'
-
-    print(f"Pooling of '{bot_link}' started")
-    # it is really useful to send '👋' emoji to developer
-    # when you run local test
-    # bot.send_message(text='👋', chat_id=<YOUR TELEGRAM ID>)
-
+    updater.job_queue.run_repeating(
+        do_mailing,
+        interval=CHECK_TIMEOUT,
+        first=1)
     updater.start_polling()
     updater.idle()
-
-
-bot = Bot(TELEGRAM_TOKEN)
-try:
-    TELEGRAM_BOT_USERNAME = bot.get_me()["username"]
-except telegram.error.Unauthorized:
-    logging.error(f"Invalid TELEGRAM_TOKEN.")
-    sys.exit(1)
 
 
 def set_up_commands(bot_instance: Bot) -> None:
@@ -137,6 +145,14 @@ def set_up_commands(bot_instance: Bot) -> None:
         )
 
 
+bot = Bot(TELEGRAM_TOKEN)
+try:
+    TELEGRAM_BOT_USERNAME = bot.get_me()["username"]
+except telegram.error.Unauthorized:
+    logging.error(f"Invalid TELEGRAM_TOKEN.")
+    sys.exit(1)
+
+
 # WARNING: it's better to comment the line below in DEBUG mode.
 # Likely, you'll get a flood limit control error, when restarting bot too often
 set_up_commands(bot)
@@ -145,3 +161,4 @@ n_workers = 1 if DEBUG else 4
 dispatcher = setup_dispatcher(
     Dispatcher(bot, update_queue=None, workers=n_workers, use_context=True)
 )
+

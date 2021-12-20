@@ -3,7 +3,7 @@ from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext, Filters
 
 from tgbot.models import Game
-
+STOP_GAME_REG_HOUR = 12  # Час суток, когда заканчивается регистрация на игру
 
 DO_CREATE_GAME, DO_USER = range(2)
 
@@ -23,11 +23,12 @@ def start(update: Update, context: CallbackContext):
         context.user_data['game_id'] = game_id
 
         # Проверка - открыта ли ещё регистрация на игру
-        game_end_date = game.end_date
-        if game_end_date < datetime.date.today():
+        if datetime.date.today() >= game.end_date \
+                and datetime.datetime.today().hour >= STOP_GAME_REG_HOUR:
             update.message.reply_text(
                 f'К сожалению, регистрация участников на игру "{game.name}"'
-                f' завершена {game_end_date.strftime("%d.%m.%Y")}.\n'
+                f' завершилась {game.end_date.strftime("%d.%m.%Y")} в'
+                f' {STOP_GAME_REG_HOUR} часов.\n'
                 'С наступающим вас Новым Годом!!!',
                 reply_markup=ReplyKeyboardRemove()
             )
