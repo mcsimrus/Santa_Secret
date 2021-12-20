@@ -42,7 +42,11 @@ pip install -r requirements.txt
 DJANGO_DEBUG=True
 DATABASE_URL=sqlite:///db.sqlite3
 TELEGRAM_TOKEN=<Токен вашего бота>
+MAILING_HOUR=12
 ```
+
+Здесь `MAILING_HOUR` это час суток, после которого регистрация новых участников
+на игру прекращается.
 
 Запустите миграцию для настройки базы данных SQLite:
 
