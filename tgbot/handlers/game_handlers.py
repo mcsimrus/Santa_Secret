@@ -93,17 +93,27 @@ def get_game_date_send(update: Update, context: CallbackContext):
 
 def game_created(update: Update, context: CallbackContext):
     # from DO_GET_DATE_SEND
-    send_date = update.message.text.replace(',', '.')
+    value = update.message.text.replace(',', '.')
     try:
-        day, month, year = send_date.split('.')
+        day, month, year = value.split('.')
         if len(day) > 2 or len(month) > 2 or len(year) != 4:
             raise ValueError
+        day, month, year = map(int, (day, month, year))
+        send_date = date(year, month, day)
     except ValueError:
+        update.message.reply_text(
+            text=f'Ошибка! "{value}" не является корректной датой.'
+        )
+        return get_game_date_send(update, context)
+
+    if send_date < date.today():
+        update.message.reply_text(
+            text=f'Введённая дата отправки подарков "{value}'
+                 '" должна быть больше текущей!'
+        )
         return get_game_date_send(update, context)
 
     context.user_data['game_date_send'] = update.message.text
-    day, month, year = map(int, (day, month, year))
-    send_date = date(year, month, day)
 
     min_sum = 0
     max_sum = 0
