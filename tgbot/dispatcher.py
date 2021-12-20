@@ -13,7 +13,7 @@ from telegram.ext import (
 import telegram.error
 
 from datetime import datetime, timezone, timedelta
-from santa_secret.settings import TELEGRAM_TOKEN, DEBUG
+from santa_secret.settings import TELEGRAM_TOKEN, DEBUG, MAILING_HOUR
 from tgbot.handlers import main_handlers, user_handlers, game_handlers
 from tgbot.models import Game
 
@@ -103,8 +103,7 @@ def send_messages_to_ended_games(send_hour, send_timezone: timezone):
 
 
 def do_mailing(_: CallbackContext):
-    hour = int(os.getenv('MAILING_HOUR', 12))
-    send_messages_to_ended_games(hour, MOSCOW_TIMEZONE)
+    send_messages_to_ended_games(MAILING_HOUR, MOSCOW_TIMEZONE)
 
 
 def setup_dispatcher(dp):

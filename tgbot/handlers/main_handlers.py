@@ -2,8 +2,8 @@ import datetime
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CallbackContext, Filters, ConversationHandler
 
+from santa_secret.settings import MAILING_HOUR
 from tgbot.models import Game
-STOP_GAME_REG_HOUR = 12  # Час суток, когда заканчивается регистрация на игру
 
 DO_CREATE_GAME, DO_USER = range(2)
 
@@ -24,11 +24,11 @@ def start(update: Update, context: CallbackContext):
 
         # Проверка - открыта ли ещё регистрация на игру
         if datetime.date.today() >= game.end_date \
-                and datetime.datetime.today().hour >= STOP_GAME_REG_HOUR:
+                and datetime.datetime.today().hour >= MAILING_HOUR:
             update.message.reply_text(
                 f'К сожалению, регистрация участников на игру "{game.name}"'
                 f' завершилась {game.end_date.strftime("%d.%m.%Y")} в'
-                f' {STOP_GAME_REG_HOUR} часов.\n'
+                f' {MAILING_HOUR} часов.\n'
                 'С наступающим вас Новым Годом!!!',
                 reply_markup=ReplyKeyboardRemove()
             )

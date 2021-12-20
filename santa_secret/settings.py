@@ -153,3 +153,5 @@ PROVIDER_TOKEN = os.getenv('PROVIDER_TOKEN')
 CONSENT_PD_FILEPATH = os.getenv('CONSENT_PD_FILEPATH',
                                 'data/consent_personal_data.pdf')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+
+MAILING_HOUR = int(os.getenv('MAILING_HOUR', 12))
