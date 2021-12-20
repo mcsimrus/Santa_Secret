@@ -153,7 +153,3 @@ def game_created(update: Update, context: CallbackContext):
     )
     show_context_user_data('game_created', context.user_data)
     return ConversationHandler.END
-
-
-# if __name__ == '__main__':
-#     print(GAME_PRICE_LIMITS[0])

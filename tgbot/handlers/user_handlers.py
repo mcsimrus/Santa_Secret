@@ -125,7 +125,3 @@ def end_registration(update: Update, context: CallbackContext):
     )
 
     return ConversationHandler.END
-
-
-if __name__ == '__main__':
-    print(GET_NAME, GET_EMAIL, GET_WISH_LIST, GET_SANTA_LETTER)
