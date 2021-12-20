@@ -83,7 +83,7 @@ def send_recipient_info_to_participant(game_participant):
               f'  и список пожеланий: {recipient_wishlist}'
     if DEBUG:
         print(f'Сообщение для {recipient_fio} ({recipient.user.telegram_id}) отправлено')
-    bot.send_message(text=message, chat_id=recipient.user.telegram_id)
+    bot.send_message(text=message, chat_id=game_participant.user.telegram_id)
 
 
 def send_messages_to_ended_games(send_hour, send_timezone: timezone):
