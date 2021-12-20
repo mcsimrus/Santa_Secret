@@ -89,7 +89,7 @@ def send_recipient_info_to_participant(game_participant):
 def send_messages_to_ended_games(send_hour, send_timezone: timezone):
     now = datetime.now(send_timezone)
     if DEBUG:
-        print(now, now.hour, send_hour)
+        print(now, now.hour, send_hour, type(now.hour), type(send_hour), now.hour == send_hour)
     if now.hour == send_hour:
         print('1')
         games = Game.objects.filter(end_date=now.date()).filter(is_ended=False)
