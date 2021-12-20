@@ -16,7 +16,8 @@ def get_name(update: Update, context: CallbackContext):
         return GET_NAME
     else:
         update.message.reply_text(
-            'Вижу вы участвуете в наших играх не в первый раз. Можем сразу переходить к списку пожеланий.'
+            'Вижу вы участвуете в наших играх не в первый раз.'
+            ' Можем сразу переходить к списку пожеланий.'
         )
         context.user_data['model_object'] = user
         context.user_data['name'] = user.fio
