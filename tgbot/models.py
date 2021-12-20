@@ -28,6 +28,10 @@ class Game(models.Model):
         default=False
     )
 
+    class Meta:
+        verbose_name = 'Игра'
+        verbose_name_plural = 'Игры'
+
     def game_id(self):
         return f'{self.id}-{self.name}'
 
@@ -81,6 +85,10 @@ class User(models.Model):
     )
     email = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
     def __str__(self):
         return f'Пользователь {self.fio}'
 
@@ -115,6 +123,10 @@ class GameParticipant(models.Model):
         blank=True
     )
 
+    class Meta:
+        verbose_name = 'Участник'
+        verbose_name_plural = 'Участники'
+
     def __str__(self):
         return f'{self.user} в игре {self.game}'
 
@@ -138,6 +150,10 @@ class ExcludePairs(models.Model):
         verbose_name='Получатель подарка',
         related_name='excluded_pair_as_recipient'
     )
+
+    class Meta:
+        verbose_name = 'Пара-исключение участников'
+        verbose_name_plural = 'Пары-исключения участников'
 
     def __str__(self):
         return f'Игра {self.game}'
